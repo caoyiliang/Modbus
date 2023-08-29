@@ -16,11 +16,11 @@ namespace Modbus
     {
         private static readonly ILogger _logger = Logs.LogFactory.GetLogger<ModBusRtu>();
         private readonly ICrowPort _crowPort;
-        private readonly bool _isHighByteBefore;
+
 
         private bool _isConnect = false;
         public bool IsConnect => _isConnect;
-
+        public bool IsHighByteBefore { get; set; } = true;
         public List<BlockInfo> BlockInfos { get; set; } = new List<BlockInfo>();
 
         /// <inheritdoc/>
@@ -28,14 +28,13 @@ namespace Modbus
         /// <inheritdoc/>
         public event ConnectEventHandler? OnConnect { add => _crowPort.OnConnect += value; remove => _crowPort.OnConnect -= value; }
 
-        public ModBusRtu(SerialPort serialPort, bool isHighByteBefore = true, int defaultTimeout = 500)
+        public ModBusRtu(SerialPort serialPort, int defaultTimeout = 500)
         {
             _crowPort = new CrowPort(new TopPort(serialPort, new TimeParser(60)), defaultTimeout);
             _crowPort.OnSentData += CrowPort_OnSentData;
             _crowPort.OnReceivedData += CrowPort_OnReceivedData;
             _crowPort.OnConnect += CrowPort_OnConnect;
             _crowPort.OnDisconnect += CrowPort_OnDisconnect;
-            _isHighByteBefore = isHighByteBefore;
         }
 
         private async Task CrowPort_OnDisconnect()
@@ -70,8 +69,8 @@ namespace Modbus
 
         public async Task<List<ChannelRsp>> GetAsync(string address, BlockInfo blockInfo)
         {
-            var req = new GetReq(Convert.ToByte(address), blockInfo);
-            return (await _crowPort.RequestAsync(req, new Func<byte[], GetRsp>(rspByte => new GetRsp(rspByte, blockInfo, _isHighByteBefore)))).RecData;
+            var req = new GetReq(Convert.ToByte(address), blockInfo, IsHighByteBefore);
+            return (await _crowPort.RequestAsync(req, new Func<byte[], GetRsp>(rspByte => new GetRsp(rspByte, blockInfo, IsHighByteBefore)))).RecData;
         }
 
         public async Task<List<ChannelRsp>> GetAsync(string address, List<BlockInfo> blockInfos)
