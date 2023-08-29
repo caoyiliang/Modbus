@@ -5,6 +5,7 @@ namespace Modbus
 {
     public interface IModBusRtu : IProtocol
     {
+        List<BlockInfo> BlockInfos { get; set; }
         Task<List<ChannelRsp>> GetAsync(string address, BlockInfo blockInfo);
 
         Task<List<ChannelRsp>> GetAsync(string address, List<BlockInfo> blockInfos);
