@@ -1,4 +1,5 @@
 ﻿using Modbus.Parameter;
+using ProtocolInterface;
 
 namespace Modbus.Response
 {
@@ -26,7 +27,8 @@ namespace Modbus.Response
                     RegisterValueType.Float => Convert.ToDecimal(Utils.StringByteUtils.ToSingle(rspBytes, index, isHighByteBefore)),
                     RegisterValueType.UInt16 => Convert.ToDecimal(Utils.StringByteUtils.ToUInt16(rspBytes, index, isHighByteBefore)),
                     RegisterValueType.UInt32 => Convert.ToDecimal(Utils.StringByteUtils.ToUInt32(rspBytes, index, isHighByteBefore)),
-                    RegisterValueType.bInt => rspBytes[index + 1],
+                    RegisterValueType.bIntA => rspBytes[index],
+                    RegisterValueType.bIntB => rspBytes[index + 1],
                     _ => throw new ArgumentException("RegisterValueType Error"),
                 };
                 RecData.Add(new ChannelRsp { ChannelId = channelInfo.ChannelId, Value = value });

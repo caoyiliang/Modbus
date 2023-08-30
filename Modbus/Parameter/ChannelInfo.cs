@@ -1,4 +1,6 @@
-﻿namespace Modbus.Parameter
+﻿using ProtocolInterface;
+
+namespace Modbus.Parameter
 {
     public class ChannelInfo
     {
