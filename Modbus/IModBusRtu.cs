@@ -5,7 +5,10 @@ namespace Modbus
 {
     public interface IModBusRtu : IProtocol
     {
+        bool IsHighByteBefore { get; set; }
+
         List<BlockInfo> BlockInfos { get; set; }
+
         Task<List<ChannelRsp>> GetAsync(string address, BlockInfo blockInfo);
 
         Task<List<ChannelRsp>> GetAsync(string address, List<BlockInfo> blockInfos);
