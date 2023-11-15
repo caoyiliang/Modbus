@@ -5,9 +5,6 @@
         public ushort StartRegisterAddress { get; set; }
         public ushort EndRegisterAddress { get; set; }
         public List<ChannelInfo> ChannelInfos { get; set; }
-        public BlockInfo()
-        {
-            ChannelInfos = new List<ChannelInfo>();
-        }
+        public BlockInfo() => ChannelInfos = [];
     }
 }

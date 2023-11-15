@@ -16,12 +16,10 @@ namespace Modbus
     {
         private static readonly ILogger _logger = Logs.LogFactory.GetLogger<ModBusRtu>();
         private readonly ICrowPort _crowPort;
-
-
         private bool _isConnect = false;
         public bool IsConnect => _isConnect;
         public bool IsHighByteBefore { get; set; } = true;
-        public List<BlockInfo> BlockInfos { get; set; } = new List<BlockInfo>();
+        public List<BlockInfo> BlockInfos { get; set; } = [];
 
         /// <inheritdoc/>
         public event DisconnectEventHandler? OnDisconnect { add => _crowPort.OnDisconnect += value; remove => _crowPort.OnDisconnect -= value; }

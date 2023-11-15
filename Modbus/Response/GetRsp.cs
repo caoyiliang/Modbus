@@ -19,7 +19,7 @@ namespace Modbus.Response
             {
                 throw new Exception("CRC校验失败");
             }
-            RecData = new List<ChannelRsp>();
+            RecData = [];
             foreach (var channelInfo in blockInfo.ChannelInfos)
             {
                 var index = (channelInfo.RegisterAddress - blockInfo.StartRegisterAddress) * 2 + 3;
