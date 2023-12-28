@@ -7,12 +7,12 @@
 		<LangVersion>default</LangVersion>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<PackageId>CSoft.Protocol.$(AssemblyName)</PackageId>
-		<Version>8.0.0</Version>
+		<Version>8.0.1</Version>
 		<Authors>CSoft</Authors>
 		<Description>Modbus通讯协议</Description>
 		<PackageProjectUrl>https://github.com/caoyiliang/Modbus</PackageProjectUrl>
 		<PackageIcon>logo.png</PackageIcon>
-		<PackageReleaseNotes>更新.net8</PackageReleaseNotes>
+		<PackageReleaseNotes>更新依赖，增强连接状态管理</PackageReleaseNotes>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -23,7 +23,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CSoft.Protocol.ProtocolInterface" Version="8.0.0" />
+		<PackageReference Include="CSoft.Protocol.ProtocolInterface" Version="8.0.5" />
 	</ItemGroup>
 
 	<ItemGroup>
