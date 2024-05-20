@@ -22,7 +22,7 @@ namespace Modbus.Response
             RecData = [];
             foreach (var channelInfo in blockInfo.ChannelInfos)
             {
-                var index = (channelInfo.RegisterAddress - blockInfo.StartRegisterAddress) * 2 + 3;
+                var index = (channelInfo.RegisterAddress - (ushort)blockInfo.StartRegisterAddress!) * 2 + 3;
                 decimal value = channelInfo.ValueType switch
                 {
                     RegisterValueType.Float => Convert.ToDecimal(StringByteUtils.ToSingle(rspBytes, index, isHighByteBefore)),

@@ -6,7 +6,7 @@ namespace Modbus.Request
 {
     class GetReq(byte deviceAddress, BlockInfo blockInfo, bool isHighByteBefore = true) : IByteStream
     {
-        private readonly ushort _registerAddress = blockInfo.StartRegisterAddress;
+        private readonly ushort _registerAddress = (ushort)blockInfo.StartRegisterAddress!;
         private readonly ushort _registerCount = (ushort)(blockInfo.EndRegisterAddress - blockInfo.StartRegisterAddress + 1);
 
         //设备地址+功能码+寄存器地址+寄存器个数+crc

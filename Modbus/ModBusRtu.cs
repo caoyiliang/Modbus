@@ -16,8 +16,7 @@ namespace Modbus
     {
         private static readonly ILogger _logger = Logs.LogFactory.GetLogger<ModBusRtu>();
         private readonly ICrowPort _crowPort;
-        private bool _isConnect = false;
-        public bool IsConnect => _isConnect;
+        public bool IsConnect { get; private set; }
         public bool IsHighByteBefore { get; set; } = true;
         public List<BlockInfo> BlockInfos { get; set; } = [];
 
@@ -26,7 +25,7 @@ namespace Modbus
         /// <inheritdoc/>
         public event ConnectEventHandler? OnConnect { add => _crowPort.OnConnect += value; remove => _crowPort.OnConnect -= value; }
 
-        public ModBusRtu(SerialPort serialPort, int defaultTimeout = 500)
+        public ModBusRtu(SerialPort serialPort, int defaultTimeout = 5000)
         {
             _crowPort = new CrowPort(new TopPort(serialPort, new TimeParser(60)), defaultTimeout);
             _crowPort.OnSentData += CrowPort_OnSentData;
@@ -37,13 +36,13 @@ namespace Modbus
 
         private async Task CrowPort_OnDisconnect()
         {
-            _isConnect = false;
+            IsConnect = false;
             await Task.CompletedTask;
         }
 
         private async Task CrowPort_OnConnect()
         {
-            _isConnect = true;
+            IsConnect = true;
             await Task.CompletedTask;
         }
 
