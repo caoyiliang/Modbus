@@ -7,7 +7,7 @@ namespace Modbus.Parameter
     {
         private ushort registerAddress;
 
-        public int ChannelId { get; set; }
+        public string ChannelId { get; set; }
         public ushort RegisterAddress
         {
             get => registerAddress; set
