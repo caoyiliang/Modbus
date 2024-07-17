@@ -13,9 +13,9 @@ modBusRtu.BlockInfos.Add(block);
 
 //01 03 00 09 00 06 15 CA -> 01 03 0C 41 F0 00 00 42 20 00 00 42 48 00 00 5C CA(30、40、50)
 block = new Modbus.Parameter.BlockInfo();
-block.ChannelInfos.Add(new() { ChannelId = "4", RegisterAddress = 9, ValueType = RegisterValueType.Float });
-block.ChannelInfos.Add(new() { ChannelId = "5", RegisterAddress = 11, ValueType = RegisterValueType.Float });
-block.ChannelInfos.Add(new() { ChannelId = "6", RegisterAddress = 13, ValueType = RegisterValueType.Float });
+block.ChannelInfos.Add(new() { RegisterAddress = 9, ValueType = RegisterValueType.Float });
+block.ChannelInfos.Add(new() { RegisterAddress = 11, ValueType = RegisterValueType.Float });
+block.ChannelInfos.Add(new() { RegisterAddress = 13, ValueType = RegisterValueType.Float });
 
 modBusRtu.BlockInfos.Add(block);
 
