@@ -17,6 +17,7 @@ namespace Modbus
         private static readonly ILogger _logger = Logs.LogFactory.GetLogger<ModBusRtu>();
         private readonly ICrowPort _crowPort;
         public bool IsConnect { get; private set; }
+        public bool IsHighByteBefore_Req { get; set; } = true;
         public bool IsHighByteBefore { get; set; } = true;
         public List<BlockInfo> BlockInfos { get; set; } = [];
 
@@ -66,7 +67,7 @@ namespace Modbus
 
         public async Task<List<ChannelRsp>> GetAsync(string address, BlockInfo blockInfo)
         {
-            var req = new GetReq(Convert.ToByte(address), blockInfo, IsHighByteBefore);
+            var req = new GetReq(Convert.ToByte(address), blockInfo, IsHighByteBefore_Req);
             return (await _crowPort.RequestAsync(req, new Func<byte[], GetRsp>(rspByte => new GetRsp(rspByte, blockInfo, IsHighByteBefore)))).RecData;
         }
 
@@ -96,7 +97,7 @@ namespace Modbus
             foreach (var block in BlockInfos)
             {
                 if (block.Data is null) continue;
-                var req = new SetReq(addressByte, block.RegisterAddress, block.Data);
+                var req = new SetReq(addressByte, block.RegisterAddress, block.Data, IsHighByteBefore_Req);
                 await _crowPort.RequestAsync<SetReq, SetRsp>(req);
             }
         }

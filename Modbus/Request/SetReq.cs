@@ -3,14 +3,14 @@ using Utils;
 
 namespace Modbus.Request
 {
-    class SetReq(byte deviceAddress, ushort registerAddress, byte[] data) : IByteStream
+    class SetReq(byte deviceAddress, ushort registerAddress, byte[] data, bool isHighByteBefore = true) : IByteStream
     {
         //设备地址+功能码+寄存器地址+寄存器个数+字节数+数据+crc
         public byte[] ToBytes()
         {
             var dataLength = BitConverter.GetBytes(data.Length / 2);
             var byteCount = (byte)data.Length;
-            var startAddr = StringByteUtils.GetBytes(registerAddress, true);
+            var startAddr = StringByteUtils.GetBytes(registerAddress, isHighByteBefore);
             var head = new byte[]
             {
                 deviceAddress,

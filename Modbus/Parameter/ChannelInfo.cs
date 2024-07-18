@@ -18,6 +18,8 @@ namespace Modbus.Parameter
         }
         public RegisterValueType ValueType { get; set; }
 
+        public bool? IsHighByteBefore { get; set; }
+
         public event PropertyChangedEventHandler? PropertyChanged;
     }
 }

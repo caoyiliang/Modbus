@@ -25,9 +25,9 @@ namespace Modbus.Response
                 var index = (channelInfo.RegisterAddress - (ushort)blockInfo.StartRegisterAddress!) * 2 + 3;
                 decimal value = channelInfo.ValueType switch
                 {
-                    RegisterValueType.Float => Convert.ToDecimal(StringByteUtils.ToSingle(rspBytes, index, isHighByteBefore)),
-                    RegisterValueType.UInt16 => Convert.ToDecimal(StringByteUtils.ToUInt16(rspBytes, index, isHighByteBefore)),
-                    RegisterValueType.UInt32 => Convert.ToDecimal(StringByteUtils.ToUInt32(rspBytes, index, isHighByteBefore)),
+                    RegisterValueType.Float => Convert.ToDecimal(StringByteUtils.ToSingle(rspBytes, index, channelInfo.IsHighByteBefore ?? isHighByteBefore)),
+                    RegisterValueType.UInt16 => Convert.ToDecimal(StringByteUtils.ToUInt16(rspBytes, index, channelInfo.IsHighByteBefore ?? isHighByteBefore)),
+                    RegisterValueType.UInt32 => Convert.ToDecimal(StringByteUtils.ToUInt32(rspBytes, index, channelInfo.IsHighByteBefore ?? isHighByteBefore)),
                     RegisterValueType.sbyteA => rspBytes[index],
                     RegisterValueType.sbyteB => rspBytes[index + 1],
                     _ => throw new ArgumentException("RegisterValueType Error"),
