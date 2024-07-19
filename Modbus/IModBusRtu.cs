@@ -5,7 +5,9 @@ namespace Modbus
 {
     public interface IModBusRtu : IProtocol
     {
-        bool IsHighByteBefore { get; set; }
+        bool IsHighByteBefore_Req { get; set; }
+
+        bool IsHighByteBefore_Rsp { get; set; }
 
         List<BlockInfo> BlockInfos { get; set; }
 

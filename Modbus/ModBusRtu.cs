@@ -18,7 +18,7 @@ namespace Modbus
         private readonly ICrowPort _crowPort;
         public bool IsConnect { get; private set; }
         public bool IsHighByteBefore_Req { get; set; } = true;
-        public bool IsHighByteBefore { get; set; } = true;
+        public bool IsHighByteBefore_Rsp { get; set; } = true;
         public List<BlockInfo> BlockInfos { get; set; } = [];
 
         /// <inheritdoc/>
@@ -68,7 +68,7 @@ namespace Modbus
         public async Task<List<ChannelRsp>> GetAsync(string address, BlockInfo blockInfo)
         {
             var req = new GetReq(Convert.ToByte(address), blockInfo, IsHighByteBefore_Req);
-            return (await _crowPort.RequestAsync(req, new Func<byte[], GetRsp>(rspByte => new GetRsp(rspByte, blockInfo, IsHighByteBefore)))).RecData;
+            return (await _crowPort.RequestAsync(req, new Func<byte[], GetRsp>(rspByte => new GetRsp(rspByte, blockInfo, IsHighByteBefore_Rsp)))).RecData;
         }
 
         public async Task<List<ChannelRsp>> GetAsync(string address, List<BlockInfo> blockInfos)

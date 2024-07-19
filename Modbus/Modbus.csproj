@@ -7,15 +7,13 @@
 		<LangVersion>default</LangVersion>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<PackageId>CSoft.Protocol.$(AssemblyName)</PackageId>
-		<Version>8.0.5</Version>
+		<Version>8.0.6</Version>
 		<Authors>CSoft</Authors>
 		<Description>Modbus通讯协议</Description>
 		<PackageProjectUrl>https://github.com/caoyiliang/Modbus</PackageProjectUrl>
 		<PackageIcon>logo.png</PackageIcon>
 		<PackageReleaseNotes>
-			支持高字节优先配置选项
-
-			为ModBusRtu和相关类添加了高字节优先的支持。主要更改包括在ModBusRtu.cs中为ModBusRtu类添加IsHighByteBefore_Req属性，以支持请求时高字节优先的配置；在ChannelInfo.cs中为ChannelInfo类添加了可空的布尔属性IsHighByteBefore，用于指定通道数据的处理方式；在SetReq.cs和GetRsp.cs中修改了构造函数和数据处理逻辑，以支持高字节优先的配置。这些更改允许用户在设置请求和处理响应时，根据通道配置选择合适的字节顺序。
+			
 		</PackageReleaseNotes>
 	</PropertyGroup>
 
