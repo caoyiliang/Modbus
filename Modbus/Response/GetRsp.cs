@@ -28,6 +28,8 @@ namespace Modbus.Response
                     RegisterValueType.Float => Convert.ToDecimal(StringByteUtils.ToSingle(rspBytes, index, channelInfo.IsHighByteBefore ?? isHighByteBefore)),
                     RegisterValueType.UInt16 => Convert.ToDecimal(StringByteUtils.ToUInt16(rspBytes, index, channelInfo.IsHighByteBefore ?? isHighByteBefore)),
                     RegisterValueType.UInt32 => Convert.ToDecimal(StringByteUtils.ToUInt32(rspBytes, index, channelInfo.IsHighByteBefore ?? isHighByteBefore)),
+                    RegisterValueType.Int16 => Convert.ToDecimal(StringByteUtils.ToInt16(rspBytes, index, channelInfo.IsHighByteBefore ?? isHighByteBefore)),
+                    RegisterValueType.Int32 => Convert.ToDecimal(StringByteUtils.ToInt32(rspBytes, index, channelInfo.IsHighByteBefore ?? isHighByteBefore)),
                     RegisterValueType.sbyteA => rspBytes[index],
                     RegisterValueType.sbyteB => rspBytes[index + 1],
                     _ => throw new ArgumentException("RegisterValueType Error"),
