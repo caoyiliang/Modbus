@@ -51,14 +51,21 @@ namespace Modbus.Parameter
                 {
                     case RegisterValueType.Float:
                     case RegisterValueType.UInt32:
+                    case RegisterValueType.Int32:
                         EndRegisterAddress++;
-                        break;
-                    case RegisterValueType.UInt16:
                         break;
                     default:
                         break;
                 }
             }
         }
+
+        /// <summary>
+        /// 添加连续的寄存器地址
+        /// </summary>
+        /// <param name="startRegisterAddress">起始地址</param>
+        /// <param name="Count">数据个数</param>
+        /// <param name="valueType">数据类型</param>
+        public void AddChannelInfos(ushort startRegisterAddress, int Count, RegisterValueType valueType) => BlockHelper.CreateBlock(startRegisterAddress, Count, valueType).ForEach(item => ChannelInfos.Add(item));
     }
 }

@@ -7,14 +7,15 @@
 		<LangVersion>default</LangVersion>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<PackageId>CSoft.Protocol.$(AssemblyName)</PackageId>
-		<Version>8.0.6</Version>
+		<Version>8.0.7</Version>
 		<Authors>CSoft</Authors>
 		<Description>Modbus通讯协议</Description>
 		<PackageProjectUrl>https://github.com/caoyiliang/Modbus</PackageProjectUrl>
 		<PackageIcon>logo.png</PackageIcon>
 		<PackageReleaseNotes>
-			
+			添加批量读多个寄存器，比如一下子读300个数据
 		</PackageReleaseNotes>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -25,7 +26,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CSoft.Protocol.ProtocolInterface" Version="8.2.5" />
+		<PackageReference Include="CSoft.Protocol.ProtocolInterface" Version="8.2.6" />
 	</ItemGroup>
 
 	<ItemGroup>

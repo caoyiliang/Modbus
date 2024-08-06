@@ -12,20 +12,25 @@ using Utils;
 
 namespace Modbus
 {
+    /// <inheritdoc/>
     public class ModBusRtu : IModBusRtu, IProtocol
     {
         private static readonly ILogger _logger = Logs.LogFactory.GetLogger<ModBusRtu>();
         private readonly ICrowPort _crowPort;
+        /// <inheritdoc/>
         public bool IsConnect { get; private set; }
+        /// <inheritdoc/>
         public bool IsHighByteBefore_Req { get; set; } = true;
+        /// <inheritdoc/>
         public bool IsHighByteBefore_Rsp { get; set; } = true;
+        /// <inheritdoc/>
         public List<BlockInfo> BlockInfos { get; set; } = [];
 
         /// <inheritdoc/>
         public event DisconnectEventHandler? OnDisconnect { add => _crowPort.OnDisconnect += value; remove => _crowPort.OnDisconnect -= value; }
         /// <inheritdoc/>
         public event ConnectEventHandler? OnConnect { add => _crowPort.OnConnect += value; remove => _crowPort.OnConnect -= value; }
-
+        /// <inheritdoc/>
         public ModBusRtu(SerialPort serialPort, int defaultTimeout = 5000)
         {
             _crowPort = new CrowPort(new TopPort(serialPort, new TimeParser(60)), defaultTimeout);
@@ -65,12 +70,14 @@ namespace Modbus
         /// <inheritdoc/>
         public Task CloseAsync() => _crowPort.CloseAsync();
 
+        /// <inheritdoc/>
         public async Task<List<ChannelRsp>> GetAsync(string address, BlockInfo blockInfo)
         {
             var req = new GetReq(Convert.ToByte(address), blockInfo, IsHighByteBefore_Req);
             return (await _crowPort.RequestAsync(req, new Func<byte[], GetRsp>(rspByte => new GetRsp(rspByte, blockInfo, IsHighByteBefore_Rsp)))).RecData;
         }
 
+        /// <inheritdoc/>
         public async Task<List<ChannelRsp>> GetAsync(string address, List<BlockInfo> blockInfos)
         {
             var result = new List<ChannelRsp>();
@@ -81,6 +88,7 @@ namespace Modbus
             return result;
         }
 
+        /// <inheritdoc/>
         public async Task<List<ChannelRsp>> GetAsync(string address)
         {
             var result = new List<ChannelRsp>();
@@ -91,6 +99,7 @@ namespace Modbus
             return result;
         }
 
+        /// <inheritdoc/>
         public async Task SetAsync(string address, List<SetBlockInfo> BlockInfos)
         {
             byte addressByte = Convert.ToByte(address);
