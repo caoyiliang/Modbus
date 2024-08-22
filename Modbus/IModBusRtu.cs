@@ -1,4 +1,5 @@
-﻿using Modbus.Parameter;
+﻿using Communication;
+using Modbus.Parameter;
 using ProtocolInterface;
 
 namespace Modbus
@@ -8,6 +9,16 @@ namespace Modbus
     /// </summary>
     public interface IModBusRtu : IProtocol
     {
+        /// <summary>
+        /// 发送数据的事件
+        /// </summary>
+        public event SentDataEventHandler<byte[]> OnSentData;
+
+        /// <summary>
+        /// 接收数据的事件
+        /// </summary>
+        public event Crow.ReceivedDataEventHandler<byte[]> OnReceivedData;
+
         /// <summary>
         /// 请求是否高字节在前
         /// </summary>

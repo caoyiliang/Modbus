@@ -2,6 +2,7 @@
 using Communication.Bus.PhysicalPort;
 using Modbus;
 using ProtocolInterface;
+using System.Text;
 
 Console.WriteLine("Hello, World!");
 IModBusRtu modBusRtu = new ModBusRtu(new SerialPort("COM2"));
@@ -30,7 +31,14 @@ modBusRtu.BlockInfos.Add(block);
 await modBusRtu.OpenAsync();
 
 #pragma warning disable IDE0059 // 不需要赋值
-var rs = await modBusRtu.GetAsync("01");
+//var rs = await modBusRtu.GetAsync("01");
+
+
+//01 03 11 00 00 0A C0 F1->03 10 14 56 65 72 30 39 30 49 5F 32 34 30 35 32 31 5F 30 39 32 37 5F B2 F3
+var b = new Modbus.Parameter.BlockInfo();
+b.ChannelInfos.Add(new() { ChannelId = "1", RegisterAddress = 0x1100, ValueType = RegisterValueType.String, Count = 10 });
+var rs = await modBusRtu.GetAsync("01", b);
+var str = Encoding.ASCII.GetString((byte[])rs[0].Value);
 #pragma warning restore IDE0059 // 不需要赋值
 
 //await modBusRtu.SetAsync("01",

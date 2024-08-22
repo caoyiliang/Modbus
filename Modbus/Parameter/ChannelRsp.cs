@@ -3,6 +3,6 @@
     public class ChannelRsp
     {
         public string? ChannelId { get; set; }
-        public decimal Value { get; set; }
+        public object Value { get; set; }
     }
 }

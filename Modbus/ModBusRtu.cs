@@ -31,6 +31,10 @@ namespace Modbus
         /// <inheritdoc/>
         public event ConnectEventHandler? OnConnect { add => _crowPort.OnConnect += value; remove => _crowPort.OnConnect -= value; }
         /// <inheritdoc/>
+        public event SentDataEventHandler<byte[]>? OnSentData { add => _crowPort.OnSentData += value; remove => _crowPort.OnSentData -= value; }
+        /// <inheritdoc/>
+        public event Crow.ReceivedDataEventHandler<byte[]>? OnReceivedData { add => _crowPort.OnReceivedData += value; remove => _crowPort.OnReceivedData -= value; }
+        /// <inheritdoc/>
         public ModBusRtu(SerialPort serialPort, int defaultTimeout = 5000)
         {
             _crowPort = new CrowPort(new TopPort(serialPort, new TimeParser(60)), defaultTimeout);

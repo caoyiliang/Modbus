@@ -23,19 +23,27 @@ namespace Modbus.Response
             foreach (var channelInfo in blockInfo.ChannelInfos)
             {
                 var index = (channelInfo.RegisterAddress - (ushort)blockInfo.StartRegisterAddress!) * 2 + 3;
-                decimal value = channelInfo.ValueType switch
+                object value = channelInfo.ValueType switch
                 {
-                    RegisterValueType.Float => Convert.ToDecimal(StringByteUtils.ToSingle(rspBytes, index, channelInfo.IsHighByteBefore ?? isHighByteBefore)),
-                    RegisterValueType.UInt16 => Convert.ToDecimal(StringByteUtils.ToUInt16(rspBytes, index, channelInfo.IsHighByteBefore ?? isHighByteBefore)),
-                    RegisterValueType.UInt32 => Convert.ToDecimal(StringByteUtils.ToUInt32(rspBytes, index, channelInfo.IsHighByteBefore ?? isHighByteBefore)),
-                    RegisterValueType.Int16 => Convert.ToDecimal(StringByteUtils.ToInt16(rspBytes, index, channelInfo.IsHighByteBefore ?? isHighByteBefore)),
-                    RegisterValueType.Int32 => Convert.ToDecimal(StringByteUtils.ToInt32(rspBytes, index, channelInfo.IsHighByteBefore ?? isHighByteBefore)),
+                    RegisterValueType.Float => StringByteUtils.ToSingle(rspBytes, index, channelInfo.IsHighByteBefore ?? isHighByteBefore),
+                    RegisterValueType.UInt16 => StringByteUtils.ToUInt16(rspBytes, index, channelInfo.IsHighByteBefore ?? isHighByteBefore),
+                    RegisterValueType.UInt32 => StringByteUtils.ToUInt32(rspBytes, index, channelInfo.IsHighByteBefore ?? isHighByteBefore),
+                    RegisterValueType.Int16 => StringByteUtils.ToInt16(rspBytes, index, channelInfo.IsHighByteBefore ?? isHighByteBefore),
+                    RegisterValueType.Int32 => StringByteUtils.ToInt32(rspBytes, index, channelInfo.IsHighByteBefore ?? isHighByteBefore),
                     RegisterValueType.sbyteA => rspBytes[index],
                     RegisterValueType.sbyteB => rspBytes[index + 1],
+                    RegisterValueType.String => GetArray(rspBytes, index, channelInfo.Count * 2),
                     _ => throw new ArgumentException("RegisterValueType Error"),
                 };
                 RecData.Add(new ChannelRsp { ChannelId = channelInfo.ChannelId, Value = value });
             }
+        }
+
+        private byte[] GetArray(byte[] rspBytes, int index, int count)
+        {
+            byte[] result = new byte[count];
+            Array.Copy(rspBytes, index, result, 0, count);
+            return result;
         }
     }
 }

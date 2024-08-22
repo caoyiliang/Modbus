@@ -54,6 +54,9 @@ namespace Modbus.Parameter
                     case RegisterValueType.Int32:
                         EndRegisterAddress++;
                         break;
+                    case RegisterValueType.String:
+                        EndRegisterAddress += (ushort)(item.Count - 1);
+                        break;
                     default:
                         break;
                 }
