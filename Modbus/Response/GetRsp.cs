@@ -8,7 +8,7 @@ namespace Modbus.Response
     {
         public List<ChannelRsp> RecData { get; set; }
 
-        public GetRsp(byte[] rspBytes, BlockInfo blockInfo, bool isHighByteBefore = true)
+        public GetRsp(byte[] rspBytes, Block blockInfo, bool isHighByteBefore = true)
         {
             if (rspBytes.Length < 3)
             {
@@ -20,7 +20,7 @@ namespace Modbus.Response
                 throw new Exception("CRC校验失败");
             }
             RecData = [];
-            foreach (var channelInfo in blockInfo.ChannelInfos)
+            foreach (var channelInfo in blockInfo.Channels)
             {
                 var index = (channelInfo.RegisterAddress - (ushort)blockInfo.StartRegisterAddress!) * 2 + 3;
                 object value = channelInfo.ValueType switch

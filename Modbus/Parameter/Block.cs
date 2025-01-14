@@ -4,39 +4,41 @@ using System.ComponentModel;
 
 namespace Modbus.Parameter
 {
-    public class BlockInfo
+    public class Block
     {
+        public event PropertyChangedEventHandler? PropertyChanged;
         public ushort? StartRegisterAddress { get; private set; }
         public ushort EndRegisterAddress { get; private set; }
-        public ObservableCollection<ChannelInfo> ChannelInfos { get; set; }
-        public BlockInfo()
+        public ObservableCollection<Channel> Channels { get; set; }
+        public Block()
         {
-            ChannelInfos = [];
-            ChannelInfos.CollectionChanged += ChannelInfos_CollectionChanged;
+            Channels = [];
+            Channels.CollectionChanged += ChannelInfos_CollectionChanged;
         }
 
         private void ChannelInfos_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
             {
-                foreach (ChannelInfo item in e.NewItems)
+                foreach (Channel item in e.NewItems)
                 {
                     Change(item);
                     item.PropertyChanged += Item_PropertyChanged;
                 }
+                PropertyChanged?.Invoke(e.NewItems, new PropertyChangedEventArgs(nameof(Channels)));
             }
         }
 
         private void Item_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             StartRegisterAddress = null;
-            foreach (var item in ChannelInfos)
+            foreach (var item in Channels)
             {
                 Change(item);
             }
         }
 
-        private void Change(ChannelInfo item)
+        private void Change(Channel item)
         {
             var value = item.RegisterAddress;
             StartRegisterAddress ??= value;
@@ -69,6 +71,6 @@ namespace Modbus.Parameter
         /// <param name="startRegisterAddress">起始地址</param>
         /// <param name="Count">数据个数</param>
         /// <param name="valueType">数据类型</param>
-        public void AddChannelInfos(ushort startRegisterAddress, int Count, RegisterValueType valueType) => BlockHelper.CreateBlock(startRegisterAddress, Count, valueType).ForEach(item => ChannelInfos.Add(item));
+        public void AddChannelInfos(ushort startRegisterAddress, int Count, RegisterValueType valueType) => BlockHelper.CreateBlock(startRegisterAddress, Count, valueType).ForEach(item => Channels.Add(item));
     }
 }

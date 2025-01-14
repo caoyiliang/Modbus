@@ -24,7 +24,7 @@ namespace Modbus
         /// <inheritdoc/>
         public bool IsHighByteBefore_Rsp { get; set; } = true;
         /// <inheritdoc/>
-        public List<BlockInfo> BlockInfos { get; set; } = [];
+        public BlockList BlockInfos { get; set; }
 
         /// <inheritdoc/>
         public event DisconnectEventHandler? OnDisconnect { add => _crowPort.OnDisconnect += value; remove => _crowPort.OnDisconnect -= value; }
@@ -75,17 +75,17 @@ namespace Modbus
         public Task CloseAsync() => _crowPort.CloseAsync();
 
         /// <inheritdoc/>
-        public async Task<List<ChannelRsp>> GetAsync(string address, BlockInfo blockInfo)
+        public async Task<List<ChannelRsp>> GetAsync(string address, Block blockInfo)
         {
             var req = new GetReq(Convert.ToByte(address), blockInfo, IsHighByteBefore_Req);
             return (await _crowPort.RequestAsync(req, new Func<byte[], GetRsp>(rspByte => new GetRsp(rspByte, blockInfo, IsHighByteBefore_Rsp)))).RecData;
         }
 
         /// <inheritdoc/>
-        public async Task<List<ChannelRsp>> GetAsync(string address, List<BlockInfo> blockInfos)
+        public async Task<List<ChannelRsp>> GetAsync(string address, BlockList blockInfos)
         {
             var result = new List<ChannelRsp>();
-            foreach (var blockInfo in blockInfos)
+            foreach (var blockInfo in blockInfos.Blocks)
             {
                 result.AddRange(await GetAsync(address, blockInfo));
             }
@@ -96,7 +96,7 @@ namespace Modbus
         public async Task<List<ChannelRsp>> GetAsync(string address)
         {
             var result = new List<ChannelRsp>();
-            foreach (var blockInfo in BlockInfos)
+            foreach (var blockInfo in BlockInfos.Blocks)
             {
                 result.AddRange(await GetAsync(address, blockInfo));
             }

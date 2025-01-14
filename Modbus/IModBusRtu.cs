@@ -32,21 +32,21 @@ namespace Modbus
         /// <summary>
         /// 块信息
         /// </summary>
-        List<BlockInfo> BlockInfos { get; set; }
+        BlockList BlockInfos { get; set; }
 
         /// <summary>
         /// 获取寄存器数据
         /// </summary>
         /// <param name="address">设备地址</param>
         /// <param name="blockInfo">需要获取的块</param>
-        Task<List<ChannelRsp>> GetAsync(string address, BlockInfo blockInfo);
+        Task<List<ChannelRsp>> GetAsync(string address, Block blockInfo);
 
         /// <summary>
         /// 获取寄存器数据
         /// </summary>
         /// <param name="address">设备地址</param>
         /// <param name="blockInfos">需要获取的块</param>
-        Task<List<ChannelRsp>> GetAsync(string address, List<BlockInfo> blockInfos);
+        Task<List<ChannelRsp>> GetAsync(string address, BlockList blockInfos);
 
         /// <summary>
         /// 获取寄存器数据

@@ -5,9 +5,9 @@ namespace Modbus
 {
     public static class BlockHelper
     {
-        public static List<ChannelInfo> CreateBlock(ushort startRegisterAddress, int Count, RegisterValueType valueType)
+        public static List<Channel> CreateBlock(ushort startRegisterAddress, int Count, RegisterValueType valueType)
         {
-            var channelInfos = new List<ChannelInfo>();
+            var channelInfos = new List<Channel>();
             for (int i = 0; i < Count; i++)
             {
                 if (valueType == RegisterValueType.Int32 || valueType == RegisterValueType.UInt32 || valueType == RegisterValueType.Float)

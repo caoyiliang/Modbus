@@ -6,7 +6,7 @@ namespace Modbus.Parameter
     /// <summary>
     /// 存储通道信息
     /// </summary>
-    public class ChannelInfo
+    public class Channel
     {
         private ushort registerAddress;
 

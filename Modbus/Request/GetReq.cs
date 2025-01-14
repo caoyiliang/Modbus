@@ -4,7 +4,7 @@ using Utils;
 
 namespace Modbus.Request
 {
-    class GetReq(byte deviceAddress, BlockInfo blockInfo, bool isHighByteBefore = true) : IByteStream
+    class GetReq(byte deviceAddress, Block blockInfo, bool isHighByteBefore = true) : IByteStream
     {
         private readonly ushort _registerAddress = (ushort)blockInfo.StartRegisterAddress!;
         private readonly ushort _registerCount = (ushort)(blockInfo.EndRegisterAddress - blockInfo.StartRegisterAddress + 1);
