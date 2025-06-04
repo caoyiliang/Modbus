@@ -48,7 +48,11 @@ await modBusRtu.OpenAsync();
 
 var b = new BlockList();
 b.Add(new ProtocolData());
-var rs = await modBusRtu.GetAsync("01", b);
+//var rs = await modBusRtu.GetAsync("01", b);
+var rs = await modBusRtu.GetAsync<ProtocolData>("01", b);
+
+// rs 的类型为 List<ProtocolData>
+Console.WriteLine($"A: {rs.A}, B: {rs.B}, C: {rs.C}, D: {rs.D}");
 
 //await modBusRtu.SetAsync("01",
 //    [
@@ -60,15 +64,15 @@ Console.ReadKey();
 
 public class ProtocolData
 {
-    [CHProtocol("a", 1)]
+    [CHProtocol(1, "a")]
     public float A { get; set; }
 
-    [CHProtocol("b", 3)]
+    [CHProtocol(3)]
     public UInt16 B { get; set; }
 
-    [CHProtocol("c", 4)]
+    [CHProtocol(4)]
     public float C { get; set; }
 
-    [CHProtocol("d", 9)]
+    [CHProtocol(9)]
     public float D { get; set; }
 }

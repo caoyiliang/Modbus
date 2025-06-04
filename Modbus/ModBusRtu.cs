@@ -6,6 +6,7 @@ using Modbus.Request;
 using Modbus.Response;
 using Parser.Parsers;
 using ProtocolInterface;
+using System.Reflection;
 using TopPortLib;
 using TopPortLib.Interfaces;
 using Utils;
@@ -17,6 +18,7 @@ namespace Modbus
     {
         private static readonly ILogger _logger = Logs.LogFactory.GetLogger<ModBusRtu>();
         private readonly ICrowPort _crowPort;
+
         /// <inheritdoc/>
         public bool IsConnect { get; private set; }
         /// <inheritdoc/>
@@ -34,6 +36,7 @@ namespace Modbus
         public event SentDataEventHandler<byte[]>? OnSentData { add => _crowPort.OnSentData += value; remove => _crowPort.OnSentData -= value; }
         /// <inheritdoc/>
         public event Crow.ReceivedDataEventHandler<byte[]>? OnReceivedData { add => _crowPort.OnReceivedData += value; remove => _crowPort.OnReceivedData -= value; }
+
         /// <inheritdoc/>
         public ModBusRtu(SerialPort serialPort, int defaultTimeout = 5000)
         {
@@ -44,28 +47,28 @@ namespace Modbus
             _crowPort.OnDisconnect += CrowPort_OnDisconnect;
         }
 
-        private async Task CrowPort_OnDisconnect()
+        private Task CrowPort_OnDisconnect()
         {
             IsConnect = false;
-            await Task.CompletedTask;
+            return Task.CompletedTask;
         }
 
-        private async Task CrowPort_OnConnect()
+        private Task CrowPort_OnConnect()
         {
             IsConnect = true;
-            await Task.CompletedTask;
+            return Task.CompletedTask;
         }
 
-        private async Task CrowPort_OnReceivedData(byte[] data)
+        private Task CrowPort_OnReceivedData(byte[] data)
         {
             _logger.Trace($"ModBusRtu Rec:<-- {StringByteUtils.BytesToString(data)}");
-            await Task.CompletedTask;
+            return Task.CompletedTask;
         }
 
-        private async Task CrowPort_OnSentData(byte[] data)
+        private Task CrowPort_OnSentData(byte[] data)
         {
             _logger.Trace($"ModBusRtu Send:--> {StringByteUtils.BytesToString(data)}");
-            await Task.CompletedTask;
+            return Task.CompletedTask;
         }
 
         /// <inheritdoc/>
@@ -78,14 +81,25 @@ namespace Modbus
         public async Task<List<ChannelRsp>> GetAsync(string address, Block blockInfo)
         {
             var req = new GetReq(Convert.ToByte(address), blockInfo, IsHighByteBefore_Req);
-            return (await _crowPort.RequestAsync(req, new Func<byte[], GetRsp>(rspByte => new GetRsp(rspByte, blockInfo, IsHighByteBefore_Rsp)))).RecData;
+            return (await _crowPort.RequestAsync(req, rspByte => new GetRsp(rspByte, blockInfo, IsHighByteBefore_Rsp))).RecData;
         }
 
         /// <inheritdoc/>
         public async Task<List<ChannelRsp>> GetAsync(string address, BlockList blockInfos)
         {
+            return await GetFromBlocksAsync(address, blockInfos.Blocks);
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<ChannelRsp>> GetAsync(string address)
+        {
+            return await GetFromBlocksAsync(address, BlockInfos.Blocks);
+        }
+
+        private async Task<List<ChannelRsp>> GetFromBlocksAsync(string address, IEnumerable<Block> blocks)
+        {
             var result = new List<ChannelRsp>();
-            foreach (var blockInfo in blockInfos.Blocks)
+            foreach (var blockInfo in blocks)
             {
                 result.AddRange(await GetAsync(address, blockInfo));
             }
@@ -93,12 +107,23 @@ namespace Modbus
         }
 
         /// <inheritdoc/>
-        public async Task<List<ChannelRsp>> GetAsync(string address)
+        public async Task<T> GetAsync<T>(string address, BlockList blockInfos) where T : new()
         {
-            var result = new List<ChannelRsp>();
-            foreach (var blockInfo in BlockInfos.Blocks)
+            var result = new T();
+            var propertyMap = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .Where(p => p.GetCustomAttribute<CHProtocolAttribute>() != null)
+                .ToDictionary(p => p.GetCustomAttribute<CHProtocolAttribute>()!.ChannelId, p => p);
+
+            foreach (var blockInfo in blockInfos.Blocks)
             {
-                result.AddRange(await GetAsync(address, blockInfo));
+                var channelResponses = await GetAsync(address, blockInfo);
+                foreach (var channelRsp in channelResponses)
+                {
+                    if (channelRsp.ChannelId != null && propertyMap.TryGetValue(channelRsp.ChannelId, out var property) && property.CanWrite)
+                    {
+                        property.SetValue(result, Convert.ChangeType(channelRsp.Value, property.PropertyType));
+                    }
+                }
             }
             return result;
         }

@@ -55,6 +55,14 @@ namespace Modbus
         Task<List<ChannelRsp>> GetAsync(string address);
 
         /// <summary>
+        /// 获取寄存器数据（支持泛型）
+        /// </summary>
+        /// <typeparam name="T">返回的类型</typeparam>
+        /// <param name="address">设备地址</param>
+        /// <param name="blockInfos">需要获取的块</param>
+        Task<T> GetAsync<T>(string address, BlockList blockInfos) where T : new();
+
+        /// <summary>
         /// 设置寄存器数据
         /// </summary>
         /// <param name="address">设备地址</param>
