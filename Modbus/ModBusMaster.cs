@@ -1,5 +1,5 @@
 ﻿using Communication;
-using Communication.Bus.PhysicalPort;
+using Communication.Interfaces;
 using LogInterface;
 using Modbus.Parameter;
 using Modbus.Request;
@@ -14,10 +14,12 @@ using Utils;
 namespace Modbus
 {
     /// <inheritdoc/>
-    public class ModBusRtu : IModBusRtu, IProtocol
+    public class ModBusMaster : IModBusMaster, IProtocol
     {
-        private static readonly ILogger _logger = Logs.LogFactory.GetLogger<ModBusRtu>();
+        private static readonly ILogger _logger = Logs.LogFactory.GetLogger<ModBusMaster>();
         private readonly ICrowPort _crowPort;
+        private readonly ModbusType _modbusType;
+        private ushort _transactionId = 0;
 
         /// <inheritdoc/>
         public bool IsConnect { get; private set; }
@@ -26,7 +28,9 @@ namespace Modbus
         /// <inheritdoc/>
         public bool IsHighByteBefore_Rsp { get; set; } = true;
         /// <inheritdoc/>
-        public BlockList BlockInfos { get; set; }
+        public bool IsHighByteBefore_MBAP { get; set; } = true;
+        /// <inheritdoc/>
+        public BlockList BlockInfos { get; set; } = new();
 
         /// <inheritdoc/>
         public event DisconnectEventHandler? OnDisconnect { add => _crowPort.OnDisconnect += value; remove => _crowPort.OnDisconnect -= value; }
@@ -38,9 +42,10 @@ namespace Modbus
         public event Crow.ReceivedDataEventHandler<byte[]>? OnReceivedData { add => _crowPort.OnReceivedData += value; remove => _crowPort.OnReceivedData -= value; }
 
         /// <inheritdoc/>
-        public ModBusRtu(SerialPort serialPort, int defaultTimeout = 5000)
+        public ModBusMaster(IPhysicalPort physicalPort, ModbusType modbusType, int defaultTimeout = 5000)
         {
-            _crowPort = new CrowPort(new TopPort(serialPort, new TimeParser(60)), defaultTimeout);
+            _modbusType = modbusType;
+            _crowPort = new CrowPort(new TopPort(physicalPort, new TimeParser(60)), defaultTimeout);
             _crowPort.OnSentData += CrowPort_OnSentData;
             _crowPort.OnReceivedData += CrowPort_OnReceivedData;
             _crowPort.OnConnect += CrowPort_OnConnect;
@@ -80,8 +85,9 @@ namespace Modbus
         /// <inheritdoc/>
         public async Task<List<ChannelRsp>> GetAsync(string address, Block blockInfo)
         {
-            var req = new GetReq(Convert.ToByte(address), blockInfo, IsHighByteBefore_Req);
-            return (await _crowPort.RequestAsync(req, rspByte => new GetRsp(rspByte, blockInfo, IsHighByteBefore_Rsp))).RecData;
+
+            var req = new GetReq(Convert.ToByte(address), blockInfo, IsHighByteBefore_Req, IsHighByteBefore_MBAP, _modbusType == ModbusType.RTU ? null : _transactionId++);
+            return (await _crowPort.RequestAsync(req, (byte[] reqBytes, byte[] rspBytes) => new GetRsp(reqBytes, rspBytes, blockInfo, IsHighByteBefore_Rsp, _modbusType == ModbusType.RTU ? null : IsHighByteBefore_MBAP))).RecData;
         }
 
         /// <inheritdoc/>
@@ -136,7 +142,7 @@ namespace Modbus
             {
                 if (block.Data is null) continue;
                 var req = new SetReq(addressByte, block.RegisterAddress, block.Data, IsHighByteBefore_Req);
-                await _crowPort.RequestAsync<SetReq, SetRsp>(req);
+                await _crowPort.RequestAsync(req, (reqBytes, rspBytes) => new SetRsp(reqBytes, rspBytes, _modbusType == ModbusType.RTU ? null : IsHighByteBefore_MBAP));
             }
         }
     }

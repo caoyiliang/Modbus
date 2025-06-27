@@ -5,9 +5,9 @@ using ProtocolInterface;
 namespace Modbus
 {
     /// <summary>
-    /// ModBusRtu
+    /// ModBus主机
     /// </summary>
-    public interface IModBusRtu : IProtocol
+    public interface IModBusMaster : IProtocol
     {
         /// <summary>
         /// 发送数据的事件
@@ -28,6 +28,11 @@ namespace Modbus
         /// 响应是否高字节在前
         /// </summary>
         bool IsHighByteBefore_Rsp { get; set; }
+
+        /// <summary>
+        /// TCP MBAP头 是否高字节在前
+        /// </summary>
+        bool IsHighByteBefore_MBAP { get; set; }
 
         /// <summary>
         /// 块信息

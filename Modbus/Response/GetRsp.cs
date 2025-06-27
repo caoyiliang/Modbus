@@ -8,31 +8,50 @@ namespace Modbus.Response
     {
         public List<ChannelRsp> RecData { get; set; }
 
-        public GetRsp(byte[] rspBytes, Block blockInfo, bool isHighByteBefore = true)
+        public GetRsp(byte[] reqBytes, byte[] rspBytes, Block blockInfo, bool isHighByteBefore = true, bool? IsHighByteBefore_MBAP = null)
         {
-            if (rspBytes.Length < 3)
+            if (IsHighByteBefore_MBAP.HasValue)
             {
-                throw new Exception("长度不够");
+                if (rspBytes.Length < 6)
+                {
+                    throw new Exception("长度不够");
+                }
+                if (rspBytes.Length < StringByteUtils.ToInt16(rspBytes, 4, IsHighByteBefore_MBAP.Value) + 6)
+                {
+                    throw new Exception("数据长度不够");
+                }
+                if (reqBytes[0] != rspBytes[0] || reqBytes[1] != rspBytes[1])
+                {
+                    throw new Exception("返回事务ID不匹配");
+                }
             }
-            var crc = CRC.Crc16(rspBytes, rspBytes.Length - 2);
-            if (!(crc[0] == rspBytes[rspBytes.Length - 2] && crc[1] == rspBytes[rspBytes.Length - 1]))
+            else
             {
-                throw new Exception("CRC校验失败");
+                if (rspBytes.Length < 3)
+                {
+                    throw new Exception("长度不够");
+                }
+                var crc = CRC.Crc16(rspBytes, rspBytes.Length - 2);
+                if (!(crc[0] == rspBytes[rspBytes.Length - 2] && crc[1] == rspBytes[rspBytes.Length - 1]))
+                {
+                    throw new Exception("CRC校验失败");
+                }
             }
+            var data = rspBytes.Skip(6).ToArray();
             RecData = [];
             foreach (var channelInfo in blockInfo.Channels)
             {
                 var index = (channelInfo.RegisterAddress - (ushort)blockInfo.StartRegisterAddress!) * 2 + 3;
                 object value = channelInfo.ValueType switch
                 {
-                    RegisterValueType.Float => StringByteUtils.ToSingle(rspBytes, index, channelInfo.IsHighByteBefore ?? isHighByteBefore),
-                    RegisterValueType.UInt16 => StringByteUtils.ToUInt16(rspBytes, index, channelInfo.IsHighByteBefore ?? isHighByteBefore),
-                    RegisterValueType.UInt32 => StringByteUtils.ToUInt32(rspBytes, index, channelInfo.IsHighByteBefore ?? isHighByteBefore),
-                    RegisterValueType.Int16 => StringByteUtils.ToInt16(rspBytes, index, channelInfo.IsHighByteBefore ?? isHighByteBefore),
-                    RegisterValueType.Int32 => StringByteUtils.ToInt32(rspBytes, index, channelInfo.IsHighByteBefore ?? isHighByteBefore),
-                    RegisterValueType.sbyteA => rspBytes[index],
-                    RegisterValueType.sbyteB => rspBytes[index + 1],
-                    RegisterValueType.String => GetArray(rspBytes, index, channelInfo.Count * 2),
+                    RegisterValueType.Float => StringByteUtils.ToSingle(data, index, channelInfo.IsHighByteBefore ?? isHighByteBefore),
+                    RegisterValueType.UInt16 => StringByteUtils.ToUInt16(data, index, channelInfo.IsHighByteBefore ?? isHighByteBefore),
+                    RegisterValueType.UInt32 => StringByteUtils.ToUInt32(data, index, channelInfo.IsHighByteBefore ?? isHighByteBefore),
+                    RegisterValueType.Int16 => StringByteUtils.ToInt16(data, index, channelInfo.IsHighByteBefore ?? isHighByteBefore),
+                    RegisterValueType.Int32 => StringByteUtils.ToInt32(data, index, channelInfo.IsHighByteBefore ?? isHighByteBefore),
+                    RegisterValueType.sbyteA => data[index],
+                    RegisterValueType.sbyteB => data[index + 1],
+                    RegisterValueType.String => GetArray(data, index, channelInfo.Count * 2),
                     _ => throw new ArgumentException("RegisterValueType Error"),
                 };
                 RecData.Add(new ChannelRsp { ChannelId = channelInfo.ChannelId, Value = value });

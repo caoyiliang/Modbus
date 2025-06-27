@@ -20,7 +20,7 @@ namespace Modbus.Parameter
         /// </summary>
         public ushort RegisterAddress
         {
-            get => registerAddress; 
+            get => registerAddress;
             set
             {
                 registerAddress = value;

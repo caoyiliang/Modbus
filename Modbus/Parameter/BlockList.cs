@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Reflection;
-using System.Threading.Channels;
 
 namespace Modbus.Parameter
 {
