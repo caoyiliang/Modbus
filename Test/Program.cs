@@ -4,7 +4,7 @@ using Modbus;
 using Modbus.Parameter;
 
 Console.WriteLine("Hello, World!");
-IModBusMaster modBusRtu = new ModBusMaster(new SerialPort("COM2"), ModbusType.TCP);
+IModBusMaster modBusRtu = new ModBusMaster(new SerialPort("COM2"), ModbusType.RTU);
 
 #region Old
 ////01 03 00 01 00 05 D4 09 -> 01 03 0A 41 A0 00 00 00 15 41 B0 00 00 97 B8(20、21、22)

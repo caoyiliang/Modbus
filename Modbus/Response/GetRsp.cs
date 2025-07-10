@@ -37,7 +37,8 @@ namespace Modbus.Response
                     throw new Exception("CRC校验失败");
                 }
             }
-            var data = rspBytes.Skip(6).ToArray();
+            var data = rspBytes;
+            if (IsHighByteBefore_MBAP.HasValue) data = data.Skip(6).ToArray();
             RecData = [];
             foreach (var channelInfo in blockInfo.Channels)
             {
