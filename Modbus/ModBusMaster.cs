@@ -45,9 +45,17 @@ namespace Modbus
         public ModBusMaster(IPhysicalPort physicalPort, ModbusType modbusType, int defaultTimeout = 5000)
         {
             _modbusType = modbusType;
-            _crowPort = new CrowPort(new TopPort(physicalPort, new TimeParser(60)), defaultTimeout);
+            _crowPort = new CrowPort(new TopPort(physicalPort, new TimeParser(200)), defaultTimeout);
             _crowPort.OnSentData += CrowPort_OnSentData;
             _crowPort.OnReceivedData += CrowPort_OnReceivedData;
+            _crowPort.OnConnect += CrowPort_OnConnect;
+            _crowPort.OnDisconnect += CrowPort_OnDisconnect;
+        }
+
+        /// <inheritdoc/>
+        public ModBusMaster(ICrowPort crowPort)
+        {
+            _crowPort = crowPort;
             _crowPort.OnConnect += CrowPort_OnConnect;
             _crowPort.OnDisconnect += CrowPort_OnDisconnect;
         }
@@ -77,10 +85,17 @@ namespace Modbus
         }
 
         /// <inheritdoc/>
-        public Task OpenAsync() => _crowPort.OpenAsync();
+        public Task OpenAsync()
+        {
+            IsConnect = _crowPort.PhysicalPort.IsOpen;
+            return _crowPort.OpenAsync();
+        }
 
         /// <inheritdoc/>
-        public Task CloseAsync() => _crowPort.CloseAsync();
+        public Task CloseAsync(bool closePhysicalPort)
+        {
+            return _crowPort.CloseAsync();
+        }
 
         /// <inheritdoc/>
         public async Task<List<ChannelRsp>> GetAsync(string address, Block blockInfo)
