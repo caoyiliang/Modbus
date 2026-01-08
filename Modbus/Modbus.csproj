@@ -7,13 +7,13 @@
 		<LangVersion>default</LangVersion>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<PackageId>CSoft.Protocol.$(AssemblyName)</PackageId>
-		<Version>10.0.1</Version>
+		<Version>10.0.2</Version>
 		<Authors>CSoft</Authors>
 		<Description>Modbus通讯协议</Description>
 		<PackageProjectUrl>https://github.com/caoyiliang/Modbus</PackageProjectUrl>
 		<PackageIcon>logo.png</PackageIcon>
 		<PackageReleaseNotes>
-			更新依赖
+			修复边界值未正确处理的问题
 		</PackageReleaseNotes>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 	</PropertyGroup>

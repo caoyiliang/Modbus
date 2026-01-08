@@ -46,7 +46,7 @@ namespace Modbus.Parameter
             {
                 StartRegisterAddress = value;
             }
-            if (value > EndRegisterAddress)
+            if (value >= EndRegisterAddress)
             {
                 EndRegisterAddress = value;
                 switch (item.ValueType)
