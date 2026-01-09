@@ -105,6 +105,10 @@ namespace Modbus.Parameter
             {
                 return RegisterValueType.Float;
             }
+            else if (propertyType == typeof(double))
+            {
+                return RegisterValueType.Double;
+            }
             else if (propertyType == typeof(ushort))
             {
                 return RegisterValueType.UInt16;

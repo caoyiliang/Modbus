@@ -46,6 +46,7 @@ namespace Modbus.Response
                 object value = channelInfo.ValueType switch
                 {
                     RegisterValueType.Float => StringByteUtils.ToSingle(data, index, channelInfo.IsHighByteBefore ?? isHighByteBefore),
+                    RegisterValueType.Double => StringByteUtils.ToDouble(data, index, channelInfo.IsHighByteBefore ?? isHighByteBefore),
                     RegisterValueType.UInt16 => StringByteUtils.ToUInt16(data, index, channelInfo.IsHighByteBefore ?? isHighByteBefore),
                     RegisterValueType.UInt32 => StringByteUtils.ToUInt32(data, index, channelInfo.IsHighByteBefore ?? isHighByteBefore),
                     RegisterValueType.Int16 => StringByteUtils.ToInt16(data, index, channelInfo.IsHighByteBefore ?? isHighByteBefore),

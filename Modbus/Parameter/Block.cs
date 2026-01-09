@@ -51,6 +51,9 @@ namespace Modbus.Parameter
                 EndRegisterAddress = value;
                 switch (item.ValueType)
                 {
+                    case RegisterValueType.Double:
+                        EndRegisterAddress+=3;
+                        break;
                     case RegisterValueType.Float:
                     case RegisterValueType.UInt32:
                     case RegisterValueType.Int32:
