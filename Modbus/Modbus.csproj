@@ -7,7 +7,7 @@
 		<LangVersion>default</LangVersion>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<PackageId>CSoft.Protocol.$(AssemblyName)</PackageId>
-		<Version>10.0.5</Version>
+		<Version>10.0.6</Version>
 		<Authors>CSoft</Authors>
 		<Description>Modbus通讯协议</Description>
 		<PackageProjectUrl>https://github.com/caoyiliang/Modbus</PackageProjectUrl>
@@ -26,7 +26,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CSoft.Protocol.ProtocolInterface" Version="10.0.13" />
+		<PackageReference Include="CSoft.Protocol.ProtocolInterface" Version="10.0.14" />
 	</ItemGroup>
 
 	<ItemGroup>
